@@ -5,57 +5,78 @@ const db = require("../data/dbConfig.js");
 const router = express.Router()
 
 
-router.get("/", async (req,res,next) => {
-    try {
-        return res.json(await db("accounts").select())
-    }
-    catch(err){
-        next(err)
-    }
+router.get("/",(req,res) => {
+    db.select("*")
+    .from("accounts")
+    .then(accounts => {
+        res.status(200).json(accounts)
+    })
+    .catch(err => {
+        console.log(err,"Error in GET request to db");
+        res.status(500).json({error: "There was an error getting all the accounts."})
+    })
 })
 
-router.get("/:id", async (req,res,next) => {
-    try{
-        return res.json(await db("accounts").where("id",req.params.id).first())
-    }
-    catch(err) {
-        next(err)
-    }
+
+
+router.get("/:id",(req,res) => {
+    const {id} = req.params;
+    db("accounts")
+    .where({id})
+    .first()
+    .then(account => {
+        res.status(200).json(account)
+    })
+    .catch(err => {
+        console.log(err,"Error in GET request by id of accounts.");
+        res.status(404).json({error: "Error in getting account with specified id."})
+    })
 })
 
-router.post('/', async (req, res, next) => {
-    try {
-        const payload = {
-            name: req.body.name,
-            budget: req.body.budget,
-        }
+router.post("/", (req, res) => {
+    const data = req.body;
 
-        const [id] = await db('accounts').insert(payload)
-        return res.json(await db('accounts').where('id', id).first())
-    }
-    catch (err) {
-        next(err)
-    }
+   db("accounts")
+        .insert(data, "id")
+        .then(([id]) => {
+            db("accounts")
+            .where({id})
+            .first()
+            .then(account => {
+                res.status(201).json(account)
+            })
+            .catch(err => {
+                console.log(err, "Error with POST request to /accounts/");
+                res.status(500).json({error: "There was a problem adding new account."})
+            });
+        });
 })
 
-router.put("/:id", async (req,res,next) => {
-    try {
-        await db("accounts").where("id",req.params.id).update(req.body)
-        return res.json(await db("accounts").where("id",req.params.id).first())
-    }
-    catch(err) {
-        next(err)
-    }
+router.put("/:id", (req,res) => {
+    const changes = req.body;
+    db("accounts")
+        .where({id: req.params.id})
+        .update(changes)
+        .then(account => {
+            res.status(200).json({message: `Successfully updated ${account} account records.`})
+        })
+        .catch(err => {
+            console.log(err,"Error in PUT request to /accounts/:id");
+            res.status(500).json({error: "There was a problem updating account."})
+        });
 })
 
-router.delete("/:id", async(req,res,next) =>{
-    try {
-        await db("accounts").where("id",req.params.id).del()
-        return res.status(204).json(req.params.id)
-    }
-    catch (err) {
-        next (err)
-    }
+router.delete("/:id", (req,res) => {
+    db("accounts")
+    .where({id: req.params.id})
+    .del()
+    .then(account => {
+        res.status(200).json({message: `Successfully deleted ${account} account(s).`})
+    })
+    .catch(err => {
+        console.log(err,"error with DELETE /accounts/:id");
+        res.status(500).json({error: "Error cannot delete account with specified id."})
+    });
 })
 
-module.exports =router;
+module.exports = router;

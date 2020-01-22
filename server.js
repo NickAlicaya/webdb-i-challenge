@@ -1,6 +1,8 @@
 const express = require('express');
 
-const accountRouter = require("./accounts/accountRouter");
+const db = require('./data/dbConfig.js');
+
+const accountRouter = require("./accounts/accountRouter.js");
 
 
 const server = express();
@@ -10,12 +12,7 @@ server.use(express.json());
 server.use("/api/accounts", accountRouter)
 
 server.get("/", (req,res) => {
-    return res.send("<h1>Server is Running on port 4000</h1>")
-})
-
-server.use((err,req,res,next) => {
-    console.log(err);
-    return res.status(500).json({error: "An error occured."})
+    res.send("<h1>Server is Running on port 4000</h1>")
 })
 
 module.exports = server;
