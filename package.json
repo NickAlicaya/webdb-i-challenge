@@ -3,15 +3,28 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js"
+    "server": "nodemon index.js",
+    "start": "node server.js"
   },
-  "repository": "https://github.com/LambdaSchool/webdb-i-challenge",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LambdaSchool/webdb-i-challenge.git"
+  },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "knex": "^0.20.1",
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.4"
-  }
+  },
+  "description": "- Relational Databases\r - Writing Basic SQL Queries\r - Writing Basic Queries using Knex.js",
+  "bugs": {
+    "url": "https://github.com/LambdaSchool/webdb-i-challenge/issues"
+  },
+  "homepage": "https://github.com/LambdaSchool/webdb-i-challenge#readme",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
